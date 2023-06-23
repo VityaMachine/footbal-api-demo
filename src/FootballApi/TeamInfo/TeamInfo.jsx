@@ -1,6 +1,8 @@
+import React, { Component } from "react";
+
 import { Box, Typography, Modal, Button } from "@mui/material";
 
-import React, { Component } from "react";
+import styles from "./styles";
 
 import TeamSquad from "../TeamSquad/TeamSquad";
 
@@ -25,21 +27,19 @@ export default class TeamInfo extends Component {
     const { selectedTeam, isOpen, handleClose } = this.props;
     const { isSquadOpen } = this.state;
 
+    const textData = [
+      { key: "Name", value: selectedTeam.team.name },
+      { key: "Short name", value: selectedTeam.team.code },
+      { key: "Country", value: selectedTeam.team.country },
+      { key: "Founded", value: selectedTeam.team.founded },
+      { key: "Stadium", value: selectedTeam.venue.name },
+      { key: "Capacity", value: selectedTeam.venue.capacity },
+      { key: "City", value: selectedTeam.venue.city },
+    ];
+
     return (
       <Modal open={isOpen} onClose={handleClose} disablePortal keepMounted>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 900,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            color: "palette.text.primary",
-            p: 4,
-          }}
-        >
+        <Box sx={styles.mainBox}>
           <Typography
             variant="h4"
             align="center"
@@ -50,170 +50,30 @@ export default class TeamInfo extends Component {
             Team info
           </Typography>
 
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box
-                sx={{
-                  width: 450,
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                {/* ! Logo */}
-                <Box
-                  sx={{
-                    width: 150,
-                    height: 150,
-                  }}
-                >
+          <Box sx={styles.contentBox}>
+            <Box sx={styles.teamBox}>
+              <Box sx={styles.textAndLogoBox}>
+                <Box sx={styles.logoBox}>
                   <img
                     src={selectedTeam.team.logo}
                     alt="logo"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
+                    style={styles.logo}
                   />
                 </Box>
 
-                {/* TextInfo */}
-                <Box sx={{ px: "20px", width: "260px" }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Name:&nbsp;
-                    </Typography>
-                    <Typography>{selectedTeam.team.name}</Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Short name:&nbsp;
-                    </Typography>
-                    <Typography>{selectedTeam.team.code}</Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Country:&nbsp;
-                    </Typography>
-                    <Typography>{selectedTeam.team.country}</Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Founded:&nbsp;
-                    </Typography>
-                    <Typography>{selectedTeam.team.founded}</Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Stadium:&nbsp;
-                    </Typography>
-                    <Typography>{selectedTeam.venue.name}</Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Capacity:&nbsp;
-                    </Typography>
-                    <Typography>{selectedTeam.venue.capacity}</Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      City:&nbsp;
-                    </Typography>
-                    <Typography>{selectedTeam.venue.city}</Typography>
-                  </Box>
+                <Box sx={styles.textBox}>
+                  {textData.map((el) => (
+                    <Box key={el.key} sx={styles.textLineBox}>
+                      <Typography sx={styles.textKey}>
+                        {el.key}:&nbsp;
+                      </Typography>
+                      <Typography>{el.value}</Typography>
+                    </Box>
+                  ))}
                 </Box>
               </Box>
 
-              {/* Controls*/}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  width: 350,
-                }}
-              >
+              <Box sx={styles.controlsBox}>
                 <Button variant="outlined" onClick={this.handleSquadOpen}>
                   Show team squad
                 </Button>
@@ -225,18 +85,10 @@ export default class TeamInfo extends Component {
             </Box>
 
             {/* Arena */}
-            <Box
-              sx={{
-                width: 450,
-                height: 338,
-              }}
-            >
+            <Box sx={styles.arenaImgBox}>
               <img
                 src={selectedTeam.venue.image}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
+                style={styles.arenaImg}
                 alt="arena"
               />
             </Box>

@@ -10,11 +10,16 @@ import {
   TableBody,
   Avatar,
   Button,
+  Typography,
+  CircularProgress,
 } from "@mui/material";
 
 import React, { Component } from "react";
 
 import apiServices from "../../services/apiFootball";
+
+import styles from "./styles";
+
 import PlayerInfo from "../PlayerInfo/PlayerInfo";
 
 export default class TeamSquad extends Component {
@@ -22,6 +27,8 @@ export default class TeamSquad extends Component {
     players: [],
     isPlayerOpen: false,
     selectedPlayer: null,
+    isPlayersLoading: true,
+    noPlayersData: false,
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -31,11 +38,21 @@ export default class TeamSquad extends Component {
       const currentTeamPlayersData = await apiServices.getCurrentTeamSquad(
         this.props.teamId
       );
-      const currentTeamPlayers = currentTeamPlayersData.response[0].players;
 
-      this.setState({
-        players: currentTeamPlayers,
-      });
+      if (currentTeamPlayersData.results > 0) {
+        const currentTeamPlayers = currentTeamPlayersData.response[0].players;
+
+        this.setState({
+          players: currentTeamPlayers,
+          isPlayersLoading: false,
+          noPlayersData: false,
+        });
+      } else {
+        this.setState({
+          noPlayersData: true,
+          isPlayersLoading: false,
+        });
+      }
     }
   }
 
@@ -63,77 +80,76 @@ export default class TeamSquad extends Component {
 
   render() {
     const { isSquadOpen, handleClose, selectedTeam } = this.props;
-    const { players, isPlayerOpen, selectedPlayer } = this.state;
+    const {
+      players,
+      isPlayerOpen,
+      selectedPlayer,
+      isPlayersLoading,
+      noPlayersData,
+    } = this.state;
 
     return (
       <Modal open={isSquadOpen} onClose={handleClose}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 800,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            color: "palette.text.primary",
-            p: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Paper sx={{ width: "100%", overflow: "hidden" }}>
-            <TableContainer sx={{ maxHeight: 500 }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    {this.columns.map((column) => (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{ minWidth: column.minWidth }}
-                      >
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {players.map((player) => (
-                    <TableRow key={player.id}>
-                      <TableCell align="center">{player.number}</TableCell>
-                      <TableCell>
-                        <Avatar
-                          alt="player photo"
-                          src={player.photo}
-                          sx={{ width: "100px", height: "100px" }}
-                        />
-                      </TableCell>
-                      <TableCell>{player.name}</TableCell>
-                      <TableCell>{player.position}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outlined"
-                          onClick={() => this.handlePlayerOpen(player)}
-                        >
-                          Show more
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+        <Box sx={styles.modalBox}>
+          <Paper elevation={0} sx={styles.titlePaper}>
+            <Typography variant="h4">Team squad</Typography>
           </Paper>
 
-          <Button
-            variant="outlined"
-            onClick={handleClose}
-            sx={{
-              mt: "20px",
-            }}
-          >
+          {isPlayersLoading ? (
+            <CircularProgress sx={styles.loadSpinner} />
+          ) : (
+            <Paper sx={styles.modalPaper}>
+              {noPlayersData ? (
+                <Typography align="center" sx={styles.noPlayersPlaceholder}>
+                  No players data for selected team
+                </Typography>
+              ) : (
+                <TableContainer sx={styles.tableContainer}>
+                  <Table stickyHeader>
+                    <TableHead>
+                      <TableRow>
+                        {this.columns.map((column) => (
+                          <TableCell
+                            key={column.id}
+                            align={column.align}
+                            style={{ minWidth: column.minWidth }}
+                          >
+                            {column.label}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {players.map((player) => (
+                        <TableRow key={player.id}>
+                          <TableCell align="center">{player.number}</TableCell>
+                          <TableCell>
+                            <Avatar
+                              alt="player photo"
+                              src={player.photo}
+                              sx={styles.playerPhoto}
+                            />
+                          </TableCell>
+                          <TableCell>{player.name}</TableCell>
+                          <TableCell>{player.position}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outlined"
+                              onClick={() => this.handlePlayerOpen(player)}
+                            >
+                              Show more
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Paper>
+          )}
+
+          <Button variant="outlined" onClick={handleClose} sx={styles.closeBtn}>
             Close
           </Button>
 

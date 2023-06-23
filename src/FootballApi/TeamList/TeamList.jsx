@@ -9,9 +9,12 @@ import {
   Avatar,
   ListItemAvatar,
   ListItemText,
+  CircularProgress,
 } from "@mui/material";
 
 import React, { Component } from "react";
+
+import styles from "./styles";
 
 import apiServices from "../../services/apiFootball";
 import TeamInfo from "../TeamInfo/TeamInfo";
@@ -19,18 +22,29 @@ import TeamInfo from "../TeamInfo/TeamInfo";
 export default class TeamList extends Component {
   state = {
     teams: [],
+    teamListLoading: false,
     selectedTeam: null,
     isOpenInfo: false,
     isSquadOpen: false,
   };
 
-
   async componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.teamName !== this.props.teamName &&
+      this.props.teamName.length > 0
+    ) {
+      this.setState({
+        teams: [],
+        teamListLoading: true,
+      });
+    }
+
     if (prevProps.teamName !== this.props.teamName) {
       const data = await apiServices.getTeamsByName(this.props.teamName);
 
       this.setState({
         teams: data.response,
+        teamListLoading: false,
       });
     }
   }
@@ -40,8 +54,6 @@ export default class TeamList extends Component {
       selectedTeam: teamData,
       isOpenInfo: true,
     });
-
-    // console.log(id);
   };
 
   handleInfoClose = () => {
@@ -65,26 +77,19 @@ export default class TeamList extends Component {
 
   render() {
     const { teamName } = this.props;
-    const { teams, selectedTeam, isOpenInfo } = this.state;
+    const { teams, selectedTeam, isOpenInfo, teamListLoading } = this.state;
 
     return (
-      <Container
-        maxWidth={"xl"}
-        sx={{
-          mt: "20px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
+      <Container maxWidth={"xl"} sx={styles.container}>
         <Typography variant="h5" align="center">
           {teamName.length === 0 ? "Search is empty" : "Search: " + teamName}
         </Typography>
-        <Box
-          sx={{
-            mt: "20px",
-          }}
-        >
+
+        {teamName.length > 0 && teamListLoading && (
+          <CircularProgress sx={styles.spinner} />
+        )}
+
+        <Box sx={styles.contentBox}>
           <Paper elevation={3}>
             <List>
               {teams.map((data) => {

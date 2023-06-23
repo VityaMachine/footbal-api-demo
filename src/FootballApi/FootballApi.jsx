@@ -25,7 +25,7 @@ export default class FootballApi extends Component {
             width: "100%",
           }}
         >
-          <Container disableGutters maxWidth={false} sx={{}}>
+          <Container disableGutters maxWidth={false}>
             <Typography variant="h4" align="center">
               Football api
             </Typography>

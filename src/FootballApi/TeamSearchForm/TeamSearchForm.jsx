@@ -1,5 +1,7 @@
-import { TextField,  Button, Container } from "@mui/material";
+import { TextField, Button, Container } from "@mui/material";
 import React, { Component } from "react";
+
+import styles from "./styles";
 
 export default class TeamSearchForm extends Component {
   state = {
@@ -31,33 +33,16 @@ export default class TeamSearchForm extends Component {
 
     return (
       <form onSubmit={this.handleFormSubmit}>
-        <Container
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "end",
-            justifyContent: "center",
-            gap: "20px",
-          }}
-          maxWidth={false}
-        >
+        <Container sx={styles.mainContainer} maxWidth={false}>
           <TextField
             variant="standard"
             label="Input team name"
             value={teamName}
             onChange={this.handleInputChange}
-            sx={{
-                width: "300px"
-            }}
+            sx={styles.textField}
           />
 
-          <Button
-            variant="contained"
-            sx={{
-              width: "100px",
-            }}
-            type="submit"
-          >
+          <Button variant="contained" sx={styles.searchBtn} type="submit">
             Search
           </Button>
         </Container>
